@@ -107,29 +107,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [tab, setTab] = useState("overview");
   const resultRef = useRef(null);
-  const addressInputRef = useRef(null);
   const loadingTimer = useRef(null);
-
-  // Load Google Places + wire autocomplete
-  useEffect(() => {
-    const initAC = () => {
-      if (!window.google || !addressInputRef.current) return;
-      const ac = new window.google.maps.places.Autocomplete(addressInputRef.current, {
-        types: ["address"], componentRestrictions: { country: "us" }
-      });
-      ac.addListener("place_changed", () => {
-        const place = ac.getPlace();
-        if (place.formatted_address) setAddress(place.formatted_address);
-      });
-    };
-
-    if (window.google) { initAC(); return; }
-    const script = document.createElement("script");
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyC9p7jRRvr5j_sPfFNbFaFNjr7RXS5AKCI&libraries=places";
-    script.async = true;
-    script.onload = initAC;
-    document.head.appendChild(script);
-  }, []);
 
   const startProgress = () => {
     setLoadingPct(0);
@@ -200,10 +178,6 @@ export default function App() {
         @keyframes scoreReveal { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:none} }
         ::-webkit-scrollbar{width:2px} ::-webkit-scrollbar-thumb{background:#ccc}
         input::placeholder { color:#bbb !important; font-family:'EB Garamond',serif !important; font-style:italic; }
-        .pac-container { font-family:'EB Garamond',serif; font-size:15px; border:1px solid #ddd; border-radius:2px; box-shadow:0 4px 16px rgba(0,0,0,0.08); margin-top:2px; }
-        .pac-item { padding:10px 14px; cursor:pointer; color:#333; }
-        .pac-item:hover { background:#f8f7f5; }
-        .pac-item-query { font-family:'EB Garamond',serif; }
       `}</style>
 
       {/* Hero — no nav */}
@@ -222,12 +196,10 @@ export default function App() {
             <div>
               <label style={labelStyle}>Business Address</label>
               <input
-                ref={addressInputRef}
                 value={address}
                 onChange={e => setAddress(e.target.value)}
                 style={inputStyle}
                 placeholder="123 Court St, Brooklyn, NY"
-                autoComplete="off"
               />
             </div>
             <div>
